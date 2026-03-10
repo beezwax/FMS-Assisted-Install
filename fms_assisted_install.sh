@@ -1,4 +1,4 @@
-#!/bin/sh env
+#!/bin/sh
 
 # HISTORY
 #	2026-03-10 simon_b: created file
@@ -27,7 +27,7 @@ fi
 
 # First parameter is the URL or file path
 REF="$1"
-PREFIX=${1:0:4}
+PREFIX=${REF:0:4}
 FILENAME=$(basename ${REF})		# Works regardless of whether using URL or file path
 
 #echo expr substr $1 5 5
@@ -39,12 +39,17 @@ if [ $PREFIX == "http" ]; then
 	FILEDIR=$TMPPATH
 	curl -k -O $1
 	ISURL=true
+	
+else
+	FILEDIR=$(dirname ${REF})
 fi
 
-if [[ -f "$REF" ]]; then
+# Should now have either the downloaded zip/dmg or a path to an installer zip/dmg given by caller
+# Do we really have the .zip or .dmg in the expected path?
+
+if [[ -f "$FILEDIR/$FILENAME" ]]; then
 	if [[ "$REF" == *.zip ]]; then
 		ISZIP=true
-		FILEDIR=$(dirname ${REF})
 	else
 		ISZIP = false
 	fi
@@ -61,8 +66,7 @@ fi
 
 if [[ ISZIP ]]; then
 	echo "Unzipping installer into $TMPPATH"
-	INSTALLDIR=$TMPPATH/${FILENAME%.*}""
-	set -x
+	INSTALLDIR=$TMPPATH/${FILENAME%.*}""	# "" to remove suffix
 	unzip -d $INSTALLDIR $FILEDIR/$FILENAME
 fi
 
