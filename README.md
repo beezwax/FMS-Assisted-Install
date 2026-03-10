@@ -2,7 +2,7 @@
 
 ## Wrapper script for silent installs of FileMaker Server using Assisted Install configuration
 
-This is a self-contained helper script to automate FileMaker Server installs by:
+This is a self-contained helper script to automate FileMaker Server installs by performing the following steps:
 
 * downloading the installer (if given a URL)
 * unzipping the installer (if in .zip format)
@@ -13,6 +13,7 @@ This is a self-contained helper script to automate FileMaker Server installs by:
 ## INSTALLATION & REQUIREMENTS
 
 ## CURRENTLY MACOS ONLY
+## CURRENTLY ONLY SUPPORTING .ZIP (NOT .DMG)
 
 Copy the latest version of the `fms_assisted_install.sh` file to the desired directory (assuming current directory here):
 
@@ -20,6 +21,15 @@ Copy the latest version of the `fms_assisted_install.sh` file to the desired dir
 * Ubuntu: `curl -o fms_assisted_install https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
 
 Then, edit the Assisted Install options found near the bottom of the script, after the line `cat << EOF > 'Assisted Install.txt'`.
+
+Be sure not to remove the `EOF` line at the end of options.
+
+Since this file will probably have your server credentials and the recovery pin in it, be sure to delete and/or save the script file in a safe place.
+
+## USAGE
+
+`./fms_assisted_install.sh <url, or path to .zip or .dmg>`
+
 
 ## REFERENCES & RELATED
 
