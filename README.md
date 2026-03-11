@@ -12,8 +12,8 @@ This is a self-contained helper script to automate FileMaker Server installs by 
 
 ## INSTALLATION & REQUIREMENTS
 
-## CURRENTLY MACOS ONLY
-## CURRENTLY ONLY SUPPORTING .ZIP (NOT .DMG)
+### CURRENTLY MACOS ONLY
+### CURRENTLY ONLY SUPPORTING .ZIP (NOT .DMG)
 
 Copy the latest version of the `fms_assisted_install.sh` file to the desired directory (assuming current directory here):
 
@@ -35,3 +35,4 @@ Since this file will probably have your server credentials and the recovery pin 
 
 * About silent installations (macOS): https://help.claris.com/en/server-network-install-setup-guide/content/silent-installation-macos.html
 * Assisted install of Claris FileMaker Server: https://support.claris.com/s/article/Assisted-install-of-FileMaker-Server-17-and-later?language=en_US
+* Setting personalization properties in Assisted Install.txt: https://help.claris.com/en/pro-network-install-setup-guide/content/setting-personalization-properties.html

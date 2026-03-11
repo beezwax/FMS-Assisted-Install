@@ -11,10 +11,26 @@
 # Edit them to match the needs for your environment.
 #
 
-VERSION='0.10, macOS'
-TMPPATH='/private/tmp'
-
 set -e
+
+VERSION='0.11, macOS/Ubuntu'
+
+REF="$1"
+ARCHIVEPREFIX=${REF:0:4}
+ARCHIVEFILE=$(basename ${REF})		# Works regardless of whether using URL or file path
+ISDMG=false
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	ISMACOS=true
+else
+	ISMACOS=false
+fi
+
+if [ $ISMACOS = true ]; then
+	TMPPATH='/private/tmp'
+else
+	TMPPATH='/tmp'
+fi
 
 if [[ `whoami` != "root" ]]; then
 	echo "Warning: Will need to run as root for installer to work"
@@ -25,54 +41,69 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-# First parameter is the URL or file path
-REF="$1"
-PREFIX=${REF:0:4}
-FILENAME=$(basename ${REF})		# Works regardless of whether using URL or file path
-
-#echo expr substr $1 5 5
-
-if [ $PREFIX == "http" ]; then
+if [ $ARCHIVEPREFIX == "http" ]; then
 	# TODO: make -k optional
-	echo "Downloading from $1"
+	echo "Downloading installer from $1"
 	pushd $TMPPATH
-	FILEDIR=$TMPPATH
+	ARCHIVEDIR=$TMPPATH
 	curl -k -O $1
 	ISURL=true
+else
+	ARCHIVEDIR=$(dirname ${REF})
+fi
+
+# Should now have either the downloaded zip, or a path to either a dmg or zip.
+# (but not the actual installer file yet)
+
+if [[ -f "$ARCHIVEDIR/$ARCHIVEFILE" ]]; then	# Really have the .zip or .dmg?
+
+	if [[ "$ARCHIVEFILE" == *.zip ]]; then
 	
-else
-	FILEDIR=$(dirname ${REF})
-fi
+	# TODO: should ensure contents are cleared out to avoid having multiple installer files present.
+	
+		PKGDIR=$TMPPATH/${ARCHIVEFILE%.*}""	# "" to remove suffix
+		echo "Unzipping installer into $PKGDIR"
+		unzip -d $PKGDIR $ARCHIVEDIR/$ARCHIVEFILE
+		pushd $PKGDIR
+		PKGFILE=`ls FileMaker\ Server\ *.pkg`
 
-# Should now have either the downloaded zip/dmg or a path to an installer zip/dmg given by caller
-# Do we really have the .zip or .dmg in the expected path?
+	elif [[ "$ARCHIVEFILE" == *.dmg ]]; then
+	
+		if [ $ISMACOS = true ]; then
 
-if [[ -f "$FILEDIR/$FILENAME" ]]; then
-	if [[ "$REF" == *.zip ]]; then
-		ISZIP=true
+			ISDMG=true
+			PKGDIR="$TMPPATH"
+			echo "Mounting the DMG"
+			DMGDIR=`hdiutil attach "$FILEDIR/$FILENAME" | grep -o /Volumes/.*`
+			pushd "$DMGDIR"
+			PKGFILE=`ls FileMaker\ Server\ *.pkg`
+			# The Assisted Install.txt file needs to be writeable, so we can't use the mounted DMG.
+			# To avoid having to copy the .pkg we'll symlink to it in the tmp directory instead.
+			ln -s "$DMGPKG" "$PKGDIR/"
+			pushd $PKGDIR
+
+		else
+		
+			echo "Error: .dmg installers not supported on Ubuntu"
+			exit 3
+
+		fi
+		
 	else
-		ISZIP = false
+
+		echo "Error: Don't have the expected .zip or .dmg path"
+		exit 2
+
 	fi
-	if [[ "$REF" == *.dmg ]]; then
-		ISDMG=true
-		FILEDIR='????????'
-	else
-		ISDMG=false
-	fi
-else
-	echo "Error: File not found at $REF"
-	exit 1
 fi
 
-if [[ ISZIP ]]; then
-	echo "Unzipping installer into $TMPPATH"
-	INSTALLDIR=$TMPPATH/${FILENAME%.*}""	# "" to remove suffix
-	unzip -d $INSTALLDIR $FILEDIR/$FILENAME
-fi
+# We are now in $PKGDIR, which contains (or has a symlink to) the needed pkg/deb file.
+# Still need the custom Assisted Install.txt file .
 
-pushd $INSTALLDIR
+echo "Creating the custom Assisted Install.txt file"
 
-echo "Replacing the installer's Assisted Install.txt file"
+###########################################################
+
 cat << EOF > 'Assisted Install.txt'
 
 [Assisted Install]
@@ -95,14 +126,23 @@ Use HTTPS Tunneling=0
 
 EOF
 
-PKG=`ls FileMaker\ Server\ *.pkg`
-echo $PKG
+###########################################################
+
 
 echo 'Running the installer'
 
-sudo installer -pkg "$PKG" -target /
+if [ $ISMACOS = true ]; then
+	sudo installer -pkg "$PKGFILE" -target /
+else
+	sudo ./install.sh
+fi
 
 popd
 popd
 
+if [ $ISDMG = true ]; then
+	echo "Detaching the DMG"
+	`hdiutil detach $INSTALLDIR`
 echo "Done"
+
+# TODO: optionally clean up or leave installer files here?
