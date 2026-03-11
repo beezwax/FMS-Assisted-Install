@@ -58,10 +58,12 @@ fi
 if [[ -f "$ARCHIVEDIR/$ARCHIVEFILE" ]]; then	# Really have the .zip or .dmg?
 
 	if [[ "$ARCHIVEFILE" == *.zip ]]; then
-	
-	# TODO: should ensure contents are cleared out to avoid having multiple installer files present.
-	
+		
 		PKGDIR=$TMPPATH/${ARCHIVEFILE%.*}""	# "" to remove suffix
+		if [[ -d "$PKGDIR" ]]; then
+			echo "Deleting previous copy of install files"
+			rm -r "$PKGDIR"		# may have hidden files, so we delete the entire dir
+		fi
 		echo "Unzipping installer into $PKGDIR"
 		unzip -d $PKGDIR $ARCHIVEDIR/$ARCHIVEFILE
 		pushd $PKGDIR
@@ -120,7 +122,7 @@ License Certificate Path=
 Skip Dialogs=0
 Remove Sample Database=0
 Remove Desktop Shortcut=0
-Load Previous Configuration=0
+Load Previous Configuration=1
 Filter Databases=0
 Use HTTPS Tunneling=0
 
@@ -143,6 +145,8 @@ popd
 if [ $ISDMG = true ]; then
 	echo "Detaching the DMG"
 	`hdiutil detach $INSTALLDIR`
+fi
+
 echo "Done"
 
 # TODO: optionally clean up or leave installer files here?
