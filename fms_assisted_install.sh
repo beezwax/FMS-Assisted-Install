@@ -48,6 +48,7 @@ if [ $ARCHIVEPREFIX == "http" ]; then
 	ARCHIVEDIR=$TMPPATH
 	curl -k -O $1
 	ISURL=true
+	popd
 else
 	ARCHIVEDIR=$(dirname ${REF})
 fi
@@ -76,13 +77,14 @@ if [[ -f "$ARCHIVEDIR/$ARCHIVEFILE" ]]; then	# Really have the .zip or .dmg?
 			ISDMG=true
 			PKGDIR="$TMPPATH"
 			echo "Mounting the DMG"
-			DMGDIR=`hdiutil attach "$FILEDIR/$FILENAME" | grep -o /Volumes/.*`
-			pushd "$DMGDIR"
+			DMGDIR=`hdiutil attach "$ARCHIVEDIR/$ARCHIVEFILE" | grep -o "/Volumes/.*"`
+			pushd "$PKGDIR"
 			PKGFILE=`ls FileMaker\ Server\ *.pkg`
+			popd
 			# The Assisted Install.txt file needs to be writeable, so we can't use the mounted DMG.
 			# To avoid having to copy the .pkg we'll symlink to it in the tmp directory instead.
-			ln -s "$DMGPKG" "$PKGDIR/"
 			pushd $PKGDIR
+			ln -f -s "$DMGDIR/$PKGFILE"
 
 		else
 		
@@ -136,15 +138,14 @@ echo 'Running the installer'
 if [ $ISMACOS = true ]; then
 	sudo installer -pkg "$PKGFILE" -target /
 else
-	sudo ./install.sh
+	FM_ASSISTED_INSTALL=. apt install ./"$PKGFILE"
 fi
 
-popd
 popd
 
 if [ $ISDMG = true ]; then
 	echo "Detaching the DMG"
-	`hdiutil detach $INSTALLDIR`
+	`hdiutil detach "$INSTALLDIR"`
 fi
 
 echo "Done"
