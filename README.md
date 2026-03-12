@@ -13,7 +13,6 @@ This is a self-contained helper script to automate FileMaker Server installs by 
 ## INSTALLATION & REQUIREMENTS
 
 ### CURRENTLY MACOS ONLY
-### CURRENTLY ONLY SUPPORTING .ZIP (NOT .DMG)
 
 Copy the latest version of the `fms_assisted_install.sh` file to the desired directory (assuming current directory here):
 
