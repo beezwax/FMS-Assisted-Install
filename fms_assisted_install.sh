@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # HISTORY
 #	2026-03-10 simon_b: created file
@@ -13,7 +13,7 @@
 
 set -e
 
-VERSION='0.11, macOS/Ubuntu'
+VERSION='0.12, macOS/Ubuntu'
 
 REF="$1"
 ARCHIVEPREFIX=${REF:0:4}
@@ -68,7 +68,12 @@ if [[ -f "$ARCHIVEDIR/$ARCHIVEFILE" ]]; then	# Really have the .zip or .dmg?
 		echo "Unzipping installer into $PKGDIR"
 		unzip -d $PKGDIR $ARCHIVEDIR/$ARCHIVEFILE
 		pushd $PKGDIR
-		PKGFILE=`ls FileMaker\ Server\ *.pkg`
+		
+		if [ $ISMACOS = true ]; then
+			PKGFILE=`ls FileMaker\ Server\ *.pkg`
+		else
+			PKGFILE=`ls filemaker-server*.deb`
+		fi
 
 	elif [[ "$ARCHIVEFILE" == *.dmg ]]; then
 	
@@ -124,7 +129,7 @@ License Certificate Path=
 Skip Dialogs=0
 Remove Sample Database=0
 Remove Desktop Shortcut=0
-Load Previous Configuration=1
+Load Previous Configuration=0
 Filter Databases=0
 Use HTTPS Tunneling=0
 
@@ -138,7 +143,7 @@ echo 'Running the installer'
 if [ $ISMACOS = true ]; then
 	sudo installer -pkg "$PKGFILE" -target /
 else
-	FM_ASSISTED_INSTALL=. apt install ./"$PKGFILE"
+	sudo FM_ASSISTED_INSTALL="$PKGDIR/Assisted Install.txt" apt install "$PKGDIR/$PKGFILE"
 fi
 
 popd

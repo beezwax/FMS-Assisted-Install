@@ -12,7 +12,7 @@ This is a self-contained helper script to automate FileMaker Server installs by 
 
 ## INSTALLATION & REQUIREMENTS
 
-### CURRENTLY MACOS ONLY
+### CURRENTLY MACOS & UBUNTU ONLY
 
 Copy the latest version of the `fms_assisted_install.sh` file to the desired directory (assuming current directory here):
 
@@ -23,7 +23,11 @@ Then, edit the Assisted Install options found near the bottom of the script, aft
 
 Be sure not to remove the `EOF` line at the end of options.
 
+### Post Install
+
 Since this file will probably have your server credentials and the recovery pin in it, be sure to delete and/or save the script file in a safe place.
+
+Some files are currently left in the /tmp directory. These will remain until eventually cleared by the OS, so you may want to clear these up manually.
 
 ## USAGE
 
@@ -35,3 +39,4 @@ Since this file will probably have your server credentials and the recovery pin 
 * About silent installations (macOS): https://help.claris.com/en/server-network-install-setup-guide/content/silent-installation-macos.html
 * Assisted install of Claris FileMaker Server: https://support.claris.com/s/article/Assisted-install-of-FileMaker-Server-17-and-later?language=en_US
 * Setting personalization properties in Assisted Install.txt: https://help.claris.com/en/pro-network-install-setup-guide/content/setting-personalization-properties.html
+* Running FileMaker Server in a Docker container for Ubuntu 20.04: https://support.claris.com/s/article/Running-FileMaker-Server-in-a-Docker-container-for-Ubuntu-20-04?language=en_US
