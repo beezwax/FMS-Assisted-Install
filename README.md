@@ -17,7 +17,7 @@ This is a self-contained helper script to automate FileMaker Server installs by 
 Copy the latest version of the `fms_assisted_install.sh` file to the desired directory (assuming current directory here):
 
 * macOS: `curl -o fms_assisted_install.sh https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
-* Ubuntu: `curl -o fms_assisted_install https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
+* Ubuntu: `curl -o fms_assisted_install.sh https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
 
 Then, edit the Assisted Install options found near the bottom of the script, after the line `cat << EOF > 'Assisted Install.txt'`.
 
