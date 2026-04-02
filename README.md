@@ -23,6 +23,8 @@ Then, edit the Assisted Install options found near the bottom of the script, aft
 
 Be sure not to remove the `EOF` line at the end of options.
 
+UBUNTU: The `unzip` command must be available. To install run `sudo apt install unzip`.
+
 ### Post Install
 
 Since this file will probably have your server credentials and the recovery pin in it, be sure to delete and/or save the script file in a safe place.
