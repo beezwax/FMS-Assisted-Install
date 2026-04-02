@@ -30,6 +30,10 @@ if [ $ISMACOS = true ]; then
 	TMPPATH='/private/tmp'
 else
 	TMPPATH='/tmp'
+	if ! type "unzip" > /dev/null; then
+		echo "The unzip command is required, install with: sudo apt install unzip"
+		exit 4
+	fi
 fi
 
 if [[ `whoami` != "root" ]]; then
