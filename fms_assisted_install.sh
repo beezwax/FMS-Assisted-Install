@@ -13,7 +13,7 @@
 
 set -e
 
-VERSION='0.12, macOS/Ubuntu'
+VERSION='0.13, macOS/Ubuntu'
 
 REF="$1"
 ARCHIVEPREFIX=${REF:0:4}
@@ -87,7 +87,7 @@ if [[ -f "$ARCHIVEDIR/$ARCHIVEFILE" ]]; then	# Really have the .zip or .dmg?
 			PKGDIR="$TMPPATH"
 			echo "Mounting the DMG"
 			DMGDIR=`hdiutil attach "$ARCHIVEDIR/$ARCHIVEFILE" | grep -o "/Volumes/.*"`
-			pushd "$PKGDIR"
+			pushd "$DMGDIR"
 			PKGFILE=`ls FileMaker\ Server\ *.pkg`
 			popd
 			# The Assisted Install.txt file needs to be writeable, so we can't use the mounted DMG.
@@ -128,7 +128,7 @@ FileMaker Server User=0
 Admin Console User=
 Admin Console Password=
 Admin Console PIN=
-Launch Deployment Assistant=1
+Launch Deployment Assistant=0
 License Certificate Path=
 Skip Dialogs=0
 Remove Sample Database=0
@@ -136,6 +136,12 @@ Remove Desktop Shortcut=0
 Load Previous Configuration=0
 Filter Databases=0
 Use HTTPS Tunneling=0
+
+# Ubuntu Only
+Security Check=1
+Swap File Size=0
+Swappiness=10
+Preserve Firewall=0
 
 EOF
 
@@ -154,7 +160,7 @@ popd
 
 if [ $ISDMG = true ]; then
 	echo "Detaching the DMG"
-	`hdiutil detach "$INSTALLDIR"`
+	`hdiutil detach "$DMGDIR"`
 fi
 
 echo "Done"
