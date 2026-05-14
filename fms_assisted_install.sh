@@ -160,7 +160,7 @@ popd
 
 if [ $ISDMG = true ]; then
 	echo "Detaching the DMG"
-	`hdiutil detach "$DMGDIR"`
+	hdiutil detach "$DMGDIR"
 fi
 
 echo "Done"

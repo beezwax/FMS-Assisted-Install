@@ -23,18 +23,22 @@ Then, edit the Assisted Install options found near the bottom of the script, aft
 
 Be sure not to remove the `EOF` line at the end of options.
 
-UBUNTU: The `unzip` command must be available. To install run `sudo apt install unzip`.
+UBUNTU: The `unzip` command must be available. To install, run `sudo apt install unzip`.
 
 ### Post Install
 
 Since this file will probably have your server credentials and the recovery pin in it, be sure to delete and/or save the script file in a safe place.
 
-Some files are currently left in the /tmp directory. These will remain until eventually cleared by the OS, so you may want to clear these up manually.
+Some files are currently left in the /tmp directory. These will remain until eventually cleared by the OS, so you may want to clear these up manually. If doing a re-install of the same version,
+and the .zip or .dmg is still present, you could use a path to the previously downloaded file instead re-downloading, eg:
+
+`./fms_assisted_install.sh /tmp/fms_22.0.6.202.dmg`
 
 ## USAGE
 
 `./fms_assisted_install.sh <url, or path to .zip or .dmg>`
 
+Above assumes executing from the same directory as the script.
 
 ## REFERENCES & RELATED
 
