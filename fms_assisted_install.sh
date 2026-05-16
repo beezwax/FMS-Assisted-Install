@@ -5,6 +5,8 @@
 
 # USAGE:
 #	fms_assisted_install.sh <url, or file path to installer .zip or .dmg>
+#		-a	use assisted install file at the specified path
+#		-u  on Ubuntu, run apt-get update before installing
 
 #
 # Below, just after the `cat` command, is the text that will be used for the Assisted Install settings.
@@ -13,12 +15,45 @@
 
 set -e
 
-VERSION='0.13, macOS/Ubuntu'
+VERSION='0.14, macOS/Ubuntu'
 
 REF="$1"
+AIPATH=""
 ARCHIVEPREFIX=${REF:0:4}
 ARCHIVEFILE=$(basename ${REF})		# Works regardless of whether using URL or file path
 ISDMG=false
+UPDATEAPT=false
+
+
+# Process command line args, which may override some of the above variables.
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		-a|--ai-path)
+			AIPATH="$2"
+			shift # past argument
+			shift # past value
+			;;
+		-U|--update)
+			UPDATEAPT=true
+			shift # past argument
+			;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
+# Restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	ISMACOS=true
@@ -33,6 +68,20 @@ else
 	if ! type "unzip" > /dev/null; then
 		echo "The unzip command is required, install with: sudo apt install unzip"
 		exit 4
+	fi
+	if [ $UPDATEAPT = true ]; then
+		echo "Running apt-get update"
+		sudo apt-get update
+		echo
+	fi
+fi
+
+if [ $AIPATH != "" ]; then
+	if [[ -f "$AIPATH" ]]; then
+		cp "$AIPATH" "$TMPPATH/Assisted Install.txt"
+	else
+		echo "Error: The Assisted Install file doesn't exist at $AIPATH"
+		exit 5
 	fi
 fi
 
@@ -144,6 +193,19 @@ Swappiness=10
 Preserve Firewall=0
 
 EOF
+
+# o|organization: Organization
+# d|deployment: Deployment Options
+# u|user: Admin Console User
+# p|password: Admin Console Password
+# n|pin: Admin Console PIN
+# l|license: License Certificate Path
+# s|skip: Skip Dialogs
+# r|rm-sample: Remove Sample Database
+# s|rm-shortcut: Remove Desktop Shortcut
+# P|previous: Load Previous Configuration
+# f|filter: Filter Databases
+# t|tunneling: Use HTTPS Tunneling
 
 ###########################################################
 
