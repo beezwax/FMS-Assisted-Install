@@ -19,11 +19,11 @@ Copy the latest version of the `fms_assisted_install.sh` file to the desired dir
 * macOS: `curl -o fms_assisted_install.sh https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
 * Ubuntu: `curl -o fms_assisted_install.sh https://raw.githubusercontent.com/beezwax/FMS-Assisted-Install/refs/heads/main/fms_assisted_install.sh && chmod +x fms_assisted_install.sh`
 
+UBUNTU: The `unzip` command must be available. To install, run `sudo apt install unzip`.
+
 Then, edit the Assisted Install options found near the bottom of the script, after the line `cat << EOF > 'Assisted Install.txt'`.
 
 Be sure not to remove the `EOF` line at the end of options.
-
-UBUNTU: The `unzip` command must be available. To install, run `sudo apt install unzip`.
 
 ### Post Install
 
@@ -39,6 +39,26 @@ and the .zip or .dmg is still present, you could use a path to the previously do
 `./fms_assisted_install.sh <url, or path to .zip or .dmg>`
 
 Above assumes executing from the same directory as the script.
+
+These two options are available:
+
+* [ --ai-path | -a <aipath> ] -- use the file at given path for the Assisted Install values
+* [ --update | -U ] -- on Ubuntu, run `apt-get update` before starting installer
+
+If using the built-in Assisted Install text, some fields can be set via options:
+
+* [ --deployment | -d <options> ] -- set 'Deployment Options' field
+* [ --filter | -f ] -- set 'Filter Databases' field
+* [ --license | -l <path> ] -- set 'License Certificate Path' field
+* [ --organization | -o <name> ] -- set 'Organization' field
+* [ --password | -p <password> ] -- set 'Admin Console Password' field
+* [ --pin | -n <pin> ] -- set 'Admin Console PIN' field
+* [ --previous | -P ] -- set 'Load Previous Configuration' field
+* [ --rm-sample | -r ] -- set 'Remove Sample Database' field
+* [ --rm-shortcut | -s ] -- set 'Remove Desktop Shortcut' field
+* [ --skip | -s ] -- set 'Skip Dialogs' field
+* [ --tunneling | -t ] -- set 'Use HTTPS Tunneling' field
+* [ --user | -u <account> ] -- set 'Admin Console User' field
 
 ## REFERENCES & RELATED
 

@@ -13,6 +13,20 @@
 # Edit them to match the needs for your environment.
 #
 
+# OPTIONS AND THEIR CONFIGURATION FILE FIELDS:
+# [--organization | -o <name>] -- set 'Organization' field
+# [--deployment | -d <options>] -- set 'Deployment Options' field
+# [--user | -u <account>] -- set 'Admin Console User' field
+# [--password | -p <password>] -- set 'Admin Console Password' field
+# [--pin | -n <pin>] -- set 'Admin Console PIN' field
+# [--license | -l <path>] -- set 'License Certificate Path' field
+# [--skip | -s] -- set 'Skip Dialogs' field
+# [--rm-sample | -r] -- set 'Remove Sample Database' field
+# [--rm-shortcut | -s] -- set 'Remove Desktop Shortcut' field
+# [--previous | -P] -- set 'Load Previous Configuration' field
+# [--filter | -f] -- set 'Filter Databases' field
+# [--tunneling | -t] -- set 'Use HTTPS Tunneling' field
+
 set -e
 
 VERSION='0.14, macOS/Ubuntu'
@@ -24,6 +38,19 @@ ARCHIVEFILE=$(basename ${REF})		# Works regardless of whether using URL or file 
 ISDMG=false
 UPDATEAPT=false
 
+# Variables for Assisted Install.txt fields
+ORG=""
+DEPLOYMENT="0"
+ADMIN_USER=""
+ADMIN_PASS=""
+ADMIN_PIN=""
+LICENSE_PATH=""
+SKIP_DIALOGS="0"
+RM_SAMPLE="0"
+RM_SHORTCUT="0"
+PREVIOUS="0"
+FILTER="0"
+TUNNELING="0"
 
 # Process command line args, which may override some of the above variables.
 
@@ -35,6 +62,66 @@ while [[ $# -gt 0 ]]; do
 			AIPATH="$2"
 			shift # past argument
 			shift # past value
+			;;
+		-d|--deployment)
+			DEPLOYMENT="$2"
+			shift
+			shift
+			;;
+		-f|--filter)
+			FILTER="$2"
+			shift
+			shift
+			;;
+		-l|--license)
+			LICENSE_PATH="$2"
+			shift
+			shift
+			;;
+		-n|--pin)
+			ADMIN_PIN="$2"
+			shift
+			shift
+			;;
+		-o|--organization)
+			ORG="$2"
+			shift
+			shift
+			;;
+		-p|--password)
+			ADMIN_PASS="$2"
+			shift
+			shift
+			;;
+		-P|--previous)
+			PREVIOUS="$2"
+			shift
+			shift
+			;;
+		-r|--rm-sample)
+			RM_SAMPLE="$2"
+			shift
+			shift
+			;;
+		--rm-shortcut)
+			RM_SHORTCUT="$2"
+			shift
+			shift
+			;;
+		-s|--skip)
+			SKIP_DIALOGS="$2"
+			shift
+			shift
+			;;
+		-t|--tunneling)
+			TUNNELING="$2"
+			shift
+			shift
+			;;
+		-u|--user)
+			ADMIN_USER="$2"
+			shift
+			shift
 			;;
 		-U|--update)
 			UPDATEAPT=true
@@ -66,7 +153,7 @@ if [ $ISMACOS = true ]; then
 else
 	TMPPATH='/tmp'
 	if ! type "unzip" > /dev/null; then
-		echo "The unzip command is required, install with: sudo apt install unzip"
+		echo "Error: The unzip command is required, install with: sudo apt install unzip"
 		exit 4
 	fi
 	if [ $UPDATEAPT = true ]; then
@@ -166,25 +253,26 @@ echo "Creating the custom Assisted Install.txt file"
 
 ###########################################################
 
+
 cat << EOF > 'Assisted Install.txt'
 
 [Assisted Install]
 
 License Accepted=1
-Organization=
-Deployment Options=0
+Organization=$ORG
+Deployment Options=$DEPLOYMENT
 FileMaker Server User=0
-Admin Console User=
-Admin Console Password=
-Admin Console PIN=
+Admin Console User=$ADMIN_USER
+Admin Console Password=$ADMIN_PASS
+Admin Console PIN=$ADMIN_PIN
 Launch Deployment Assistant=0
-License Certificate Path=
-Skip Dialogs=0
-Remove Sample Database=0
-Remove Desktop Shortcut=0
-Load Previous Configuration=0
-Filter Databases=0
-Use HTTPS Tunneling=0
+License Certificate Path=$LICENSE_PATH
+Skip Dialogs=$SKIP_DIALOGS
+Remove Sample Database=$RM_SAMPLE
+Remove Desktop Shortcut=$RM_SHORTCUT
+Load Previous Configuration=$PREVIOUS
+Filter Databases=$FILTER
+Use HTTPS Tunneling=$TUNNELING
 
 # Ubuntu Only
 Security Check=1
@@ -193,19 +281,6 @@ Swappiness=10
 Preserve Firewall=0
 
 EOF
-
-# o|organization: Organization
-# d|deployment: Deployment Options
-# u|user: Admin Console User
-# p|password: Admin Console Password
-# n|pin: Admin Console PIN
-# l|license: License Certificate Path
-# s|skip: Skip Dialogs
-# r|rm-sample: Remove Sample Database
-# s|rm-shortcut: Remove Desktop Shortcut
-# P|previous: Load Previous Configuration
-# f|filter: Filter Databases
-# t|tunneling: Use HTTPS Tunneling
 
 ###########################################################
 
